@@ -13,7 +13,7 @@ Donors give into an on chain escrow. Funds reach the people doing the work one m
 
 ## Quick start
 
-Requires Node.js 20 or newer and a running [aidline-backend](https://github.com/aidline-org/aidline-backend).
+Requires Node.js 24 or newer and a running [aidline-backend](https://github.com/aidline-org/aidline-backend).
 
 ```sh
 git clone https://github.com/aidline-org/aidline-frontend
