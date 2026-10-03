@@ -27,6 +27,7 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+  const [organizer, setOrganizer] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   // null until edited, so it follows the connected wallet by default.
   const [beneficiaryInput, setBeneficiary] = useState<string | null>(null);
@@ -74,6 +75,7 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
           summary: summary.trim(),
           description: description.trim(),
           location: location.trim(),
+          organizer: organizer.trim() || undefined,
           imageUrl: imageUrl.trim() || undefined,
         })
       ).uri;
@@ -182,7 +184,7 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={120}
-            placeholder="Clean water for flood displaced families in Lokoja"
+            placeholder="Clean water after flooding in Les Cayes"
           />
           {err('title')}
         </div>
@@ -208,10 +210,27 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
             className="field"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="Lokoja, Nigeria"
+            placeholder="Les Cayes, Haiti"
             maxLength={120}
           />
           {err('location')}
+        </div>
+        <div>
+          <label className="label" htmlFor="organizer">
+            Raised by <span className="font-normal text-ink-muted">(optional)</span>
+          </label>
+          <input
+            id="organizer"
+            className="field"
+            value={organizer}
+            onChange={(e) => setOrganizer(e.target.value)}
+            placeholder="Haitian community association, Montreal"
+            maxLength={120}
+          />
+          <p className="hint">
+            Your group or community abroad. Donors trust campaigns they can place.
+          </p>
+          {err('organizer')}
         </div>
         <div>
           <label className="label" htmlFor="description">

@@ -7,6 +7,7 @@ export interface CampaignMetadata {
   title: string;
   summary: string;
   location: string;
+  organizer: string | null;
   category: string | null;
   imageUrl: string | null;
   description?: string;
@@ -68,6 +69,7 @@ export interface Release {
   campaignId: string;
   campaignTitle: string | null;
   location: string | null;
+  organizer: string | null;
   kind: CampaignKind;
   index: number;
   amount: string;
@@ -157,6 +159,7 @@ export const api = {
     summary: string;
     description: string;
     location: string;
+    organizer?: string;
     category?: string;
     imageUrl?: string;
   }) =>

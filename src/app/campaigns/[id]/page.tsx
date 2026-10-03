@@ -64,6 +64,11 @@ export default async function CampaignPage(props: PageProps<'/campaigns/[id]'>) 
             {m?.summary && (
               <p className="mt-5 max-w-[40rem] text-[1.1875rem] text-ink-soft">{m.summary}</p>
             )}
+            {m?.organizer && (
+              <p className="mt-4 text-[0.9375rem] text-ink-muted">
+                Raised by <span className="text-ink">{m.organizer}</span>
+              </p>
+            )}
           </header>
         </div>
       </Container>

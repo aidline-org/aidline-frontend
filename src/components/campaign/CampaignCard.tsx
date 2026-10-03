@@ -24,6 +24,9 @@ export function CampaignCard({ campaign }: { campaign: Campaign }) {
       <h3 className="mt-2 text-[1.375rem] group-hover:underline group-hover:decoration-rule group-hover:underline-offset-4">
         {m?.title ?? `Campaign #${campaign.id}`}
       </h3>
+      {m?.organizer && (
+        <p className="mt-1.5 text-[0.8125rem] text-ink-muted">Raised by {m.organizer}</p>
+      )}
       {m?.summary && <p className="mt-2 line-clamp-2 text-[0.9375rem]">{m.summary}</p>}
       <div className="mt-auto pt-5">
         <FundingBar
