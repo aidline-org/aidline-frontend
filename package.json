@@ -38,5 +38,8 @@
     "fsevents": false,
     "secp256k1": false,
     "utf-8-validate": false
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
