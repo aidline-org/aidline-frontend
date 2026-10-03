@@ -13,7 +13,7 @@ import { useTx } from '@/lib/useTx';
 const PRESETS = ['10', '50', '100'];
 
 export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
-  const { address, state: wallet, connect, sign } = useWallet();
+  const { address, state: wallet, balance, connect, sign, refreshBalance } = useWallet();
   const { state, run, busy } = useTx();
   const [input, setInput] = useState('50');
   const [lastAmount, setLastAmount] = useState<bigint>(0n);
@@ -27,7 +27,9 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
         ? 'Enter an amount greater than zero'
         : amount > remaining
           ? `Only ${formatAmount(remaining)} is still needed`
-          : null;
+          : balance !== null && amount > balance
+            ? `Your wallet holds ${formatAmount(balance)}`
+            : null;
 
   if (remaining <= 0n) {
     return (
@@ -46,6 +48,7 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
       (on) => aidline.donate(address, campaign.id, amount, sign, on),
       async () => BigInt((await api.campaign(campaign.id)).raised) > before,
     );
+    refreshBalance();
   };
 
   return (
@@ -101,15 +104,6 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
         >
           {amount && !invalid ? `Donate ${formatAmount(amount)}` : 'Donate'}
         </button>
-      ) : wallet.status === 'missing' ? (
-        <a
-          href="https://www.freighter.app/"
-          target="_blank"
-          rel="noreferrer"
-          className="btn btn-primary mt-5 w-full"
-        >
-          Install Freighter to donate
-        </a>
       ) : (
         <button
           type="button"
