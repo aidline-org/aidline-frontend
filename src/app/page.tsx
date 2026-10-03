@@ -20,14 +20,15 @@ export default async function HomePage() {
     <>
       <Container className="grid gap-12 pt-14 pb-16 md:grid-cols-12 md:pt-20">
         <div className="md:col-span-7">
-          <p className="kicker">Relief and climate funding on Stellar</p>
+          <p className="kicker">Diaspora giving for relief and climate, on Stellar</p>
           <h1 className="mt-5 text-[2.75rem] sm:text-[3.5rem] lg:text-[4rem]">
-            Every donation, traceable to the work it paid for.
+            Give back home. See exactly where it lands.
           </h1>
           <p className="mt-6 max-w-[34rem] text-[1.125rem]">
-            Gifts are held in escrow and released one milestone at a time, only after an independent
-            verifier confirms the work happened. If a campaign stalls, donors take back what was
-            never spent.
+            Communities abroad already send billions home every year. Aidline lets them fund floods,
+            droughts and climate projects with proof: gifts wait in escrow and are released one
+            milestone at a time, only after an independent verifier confirms the work. If a campaign
+            stalls, donors take back what was never spent.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link href="/campaigns" className="btn btn-primary">
@@ -74,7 +75,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="kicker">Open campaigns</p>
-            <h2 className="mt-3 text-[2rem]">Where help is needed now</h2>
+            <h2 className="mt-3 text-[2rem]">Raised by communities abroad, for home</h2>
           </div>
           <Link href="/campaigns" className="link">
             All campaigns
@@ -116,7 +117,7 @@ const STEPS = [
   {
     n: '01',
     title: 'You give into escrow',
-    body: 'Your donation goes to a smart contract, not a bank account. Nobody can spend it yet, including us.',
+    body: 'From Montreal, London or Houston, your gift goes to a smart contract, not a bank account or a middleman. Nobody can spend it yet, including us.',
   },
   {
     n: '02',

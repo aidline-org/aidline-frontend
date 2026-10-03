@@ -115,7 +115,7 @@ Write like a careful reporter.
 | Do                                                             | Avoid                                                     |
 | -------------------------------------------------------------- | --------------------------------------------------------- |
 | "120 XLM held in escrow until the next delivery is verified"   | "Your donation is making a difference!"                   |
-| "Released to Lokoja Water Committee on 3 Oct"                  | "Funds deployed to the community"                         |
+| "Released to Les Cayes Water Committee on 3 Oct"               | "Funds deployed to the community"                         |
 | "This campaign ended before its goal. You can reclaim 42 XLM." | "Oops! Something went wrong with this campaign"           |
 | "Connect wallet"                                               | "Connect your Web3 wallet to get started on your journey" |
 

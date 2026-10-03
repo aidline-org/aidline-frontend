@@ -8,9 +8,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-rule">
       <Container className="grid gap-10 py-12 text-sm md:grid-cols-[2fr_1fr_1fr]">
         <div className="max-w-sm">
-          <p className="font-serif text-lg text-ink">
-            Every donation, traceable to the work it paid for.
-          </p>
+          <p className="font-serif text-lg text-ink">Give back home. See exactly where it lands.</p>
           <p className="mt-3 text-ink-muted">
             Aidline is open source and runs on Stellar {config.network}. The contracts have not been
             audited yet, so please do not send real funds.

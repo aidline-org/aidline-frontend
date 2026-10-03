@@ -9,10 +9,10 @@ export const metadata: Metadata = { title: 'How it works' };
 const SECTIONS = [
   {
     kicker: 'The problem',
-    title: 'Donors give in the dark',
+    title: 'Diaspora communities give generously, and mostly in the dark',
     body: [
-      'When disaster strikes, money moves fast and visibility disappears. Donors rarely learn what their gift paid for, and local organisations doing the work struggle to prove it.',
-      'Aidline replaces trust in an intermediary with a public record anyone can check.',
+      'When a flood or drought hits home, people abroad are often the first to give. Money travels through group chats, cousins and informal collections. It arrives, but nobody can show what it paid for, and the local groups doing the work struggle to prove it.',
+      'Aidline replaces trust in a middleman with a public record anyone can check, from anywhere. Stellar was built for moving money across borders cheaply, which makes it a natural home for this.',
     ],
   },
   {

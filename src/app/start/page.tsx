@@ -13,7 +13,7 @@ export default async function StartPage() {
     <Container className="grid gap-12 pt-12 lg:grid-cols-12">
       <div className="lg:col-span-4">
         <p className="kicker">Start a campaign</p>
-        <h1 className="mt-3 text-[2.5rem]">Raise funds that donors can follow</h1>
+        <h1 className="mt-3 text-[2.5rem]">Rally your community abroad behind work back home</h1>
         <div className="mt-6 space-y-4 text-[0.9375rem]">
           <p>
             Split your goal into milestones. Donations wait in escrow, and each milestone is paid to

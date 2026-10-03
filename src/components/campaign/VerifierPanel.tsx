@@ -78,7 +78,7 @@ export function VerifierPanel({ campaign }: { campaign: CampaignDetail }) {
             <textarea
               id="proof-note"
               className="field min-h-24"
-              placeholder="Delivered 40 water tanks to three camps on the east bank. Receipts attached."
+              placeholder="Delivered 40 water tanks to three shelters. Receipts attached."
               value={note}
               onChange={(e) => setNote(e.target.value)}
               minLength={10}

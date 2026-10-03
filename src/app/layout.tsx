@@ -9,11 +9,11 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Aidline: relief and climate funding you can trace',
+    default: 'Aidline: diaspora giving you can trace',
     template: '%s · Aidline',
   },
   description:
-    'Donations held in escrow and released milestone by milestone, only after an independent verifier confirms the work. Built on Stellar.',
+    'Diaspora communities fund relief and climate work back home. Donations are held in escrow and released milestone by milestone, only after an independent verifier confirms the work. Built on Stellar.',
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
