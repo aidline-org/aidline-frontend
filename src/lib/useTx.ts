@@ -14,7 +14,7 @@ export type TxState =
 
 export const PHASE_LABEL: Record<string, string> = {
   preparing: 'Preparing transaction',
-  signing: 'Waiting for your signature in Freighter',
+  signing: 'Waiting for your signature in your wallet',
   submitting: 'Submitting to the network',
   confirming: 'Confirming on the ledger',
   syncing: 'Updating the page',
