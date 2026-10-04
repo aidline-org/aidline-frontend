@@ -81,6 +81,12 @@ test/                  unit tests
 
 Aidline has a deliberate visual identity: an editorial, field report look with paper and ink tones and exactly two signal colors. **Read [DESIGN.md](DESIGN.md) before changing anything visual.** Pull requests that drift toward generic UI patterns will be asked to follow it.
 
+## Contributing
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Browse open work by complexity in [ISSUES.md](ISSUES.md): 30 scoped issues, including good first issues for newcomers.
+
 ## Related repos
 
 | Repo                                                                  |                         |
