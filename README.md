@@ -4,6 +4,8 @@
 
 # Aidline Frontend
 
+**Live demo:** [aidline-frontend.vercel.app](https://aidline-frontend.vercel.app) · **API:** [aidline-api.onrender.com](https://aidline-api.onrender.com/stats) · Stellar testnet
+
 Web app for **Aidline**, where diaspora communities fund disaster relief and climate work back home, with proof it landed. Built on Stellar.
 
 Donors give into an on chain escrow. Funds reach the people doing the work one milestone at a time, only after an independent verifier publishes evidence and approves the release. If a campaign stalls, donors reclaim what was never spent. This app is where all of that happens and where anyone can check it.
