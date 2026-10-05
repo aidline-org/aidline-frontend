@@ -13,6 +13,10 @@ const passphrases = {
 // with its full literal name.
 export const config = {
   apiUrl: (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000').replace(/\/$/, ''),
+  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://aidline-frontend.vercel.app').replace(
+    /\/$/,
+    '',
+  ),
   network,
   networkPassphrase: passphrases[network],
   rpcUrl: process.env.NEXT_PUBLIC_STELLAR_RPC_URL ?? 'https://soroban-testnet.stellar.org',
