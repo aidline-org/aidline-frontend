@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { CampaignCard } from '@/components/campaign/CampaignCard';
 import { ReleaseFeed } from '@/components/campaign/ReleaseFeed';
+import { DonationReleaseChart } from '@/components/charts/DonationReleaseChart';
 import { Container } from '@/components/ui/Container';
 import { Notice } from '@/components/ui/Notice';
 import { api, type Stats } from '@/lib/api';
@@ -9,8 +10,9 @@ import { formatAmount } from '@/lib/format';
 import { safe } from '@/lib/safe';
 
 export default async function HomePage() {
-  const [stats, releases, campaigns] = await Promise.all([
+  const [stats, history, releases, campaigns] = await Promise.all([
     safe(api.stats),
+    safe(api.statsHistory),
     safe(() => api.releases(5)),
     safe(() => api.campaigns({ status: 'active', limit: 3 })),
   ]);
@@ -52,6 +54,16 @@ export default async function HomePage() {
           )}
         </aside>
       </Container>
+
+      <section className="border-t border-rule py-12">
+        <Container>
+          <DonationReleaseChart
+            history={history?.items}
+            totalDonated={stats?.totalDonated}
+            totalReleased={stats?.totalReleased}
+          />
+        </Container>
+      </section>
 
       <section className="border-t border-rule bg-paper-raised py-16">
         <Container>
