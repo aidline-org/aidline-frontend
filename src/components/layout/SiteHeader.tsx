@@ -1,7 +1,9 @@
 import Link from 'next/link';
 
 import { Container } from '@/components/ui/Container';
+import { CurrencyPicker } from '@/components/ui/CurrencyPicker';
 import { WalletButton } from '@/components/wallet/WalletButton';
+import { WrongNetworkBanner } from '@/components/wallet/WrongNetworkBanner';
 import { config } from '@/lib/config';
 
 import { Wordmark } from './Wordmark';
@@ -16,6 +18,7 @@ const NAV = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-rule bg-paper">
+      <WrongNetworkBanner />
       <Container className="flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <Wordmark />
@@ -32,7 +35,10 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <WalletButton />
+        <div className="flex items-center gap-3">
+          <CurrencyPicker />
+          <WalletButton />
+        </div>
       </Container>
       <nav
         aria-label="Main mobile"

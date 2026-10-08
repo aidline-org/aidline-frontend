@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 import { WalletProvider } from '@/components/wallet/WalletProvider';
+import { FiatProvider } from '@/lib/fiat';
 
 import { newsreader, plexMono, plexSans } from './fonts';
 import './globals.css';
@@ -14,6 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     'Diaspora communities fund relief and climate work back home. Donations are held in escrow and released milestone by milestone, only after an independent verifier confirms the work. Built on Stellar.',
+  manifest: '/manifest.webmanifest',
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
@@ -23,11 +26,14 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={`${newsreader.variable} ${plexSans.variable} ${plexMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
-        <WalletProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </WalletProvider>
+        <FiatProvider>
+          <WalletProvider>
+            <ServiceWorkerRegister />
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </WalletProvider>
+        </FiatProvider>
       </body>
     </html>
   );
