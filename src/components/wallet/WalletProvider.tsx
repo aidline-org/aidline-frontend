@@ -132,10 +132,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, [address]);
 
   useEffect(() => {
-    if (!address) {
-      setNetworkPassphrase(null);
-      return;
-    }
+    // Without an address the wrong network check is already false, so a stale
+    // passphrase does no harm and there is nothing to clear here.
+    if (!address) return;
     void checkNetwork();
     const timer = setInterval(checkNetwork, 5_000);
     window.addEventListener('focus', checkNetwork);
