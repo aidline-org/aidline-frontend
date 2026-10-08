@@ -1,12 +1,12 @@
-import { Networks } from '@stellar/stellar-sdk';
-
 const network = (process.env.NEXT_PUBLIC_STELLAR_NETWORK ?? 'testnet') as
   'testnet' | 'mainnet' | 'futurenet';
 
+// Written out rather than imported from @stellar/stellar-sdk: config is used by
+// every page, and importing the SDK here put the whole SDK in every bundle.
 const passphrases = {
-  testnet: Networks.TESTNET,
-  mainnet: Networks.PUBLIC,
-  futurenet: Networks.FUTURENET,
+  testnet: 'Test SDF Network ; September 2015',
+  mainnet: 'Public Global Stellar Network ; September 2015',
+  futurenet: 'Test SDF Future Network ; October 2022',
 };
 
 // NEXT_PUBLIC_* values are inlined at build time, so each one must be read

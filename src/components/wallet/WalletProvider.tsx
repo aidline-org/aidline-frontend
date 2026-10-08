@@ -13,7 +13,6 @@ import {
 import type { Networks } from '@creit.tech/stellar-wallets-kit/types';
 
 import { config } from '@/lib/config';
-import { tokenBalance } from '@/lib/stellar/balance';
 import type { Signer } from '@/lib/stellar/tx';
 
 type Kit = (typeof import('@creit.tech/stellar-wallets-kit/sdk'))['StellarWalletsKit'];
@@ -150,7 +149,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   const refreshBalance = useCallback(() => {
     if (!address) return;
-    tokenBalance(address)
+    // Loaded on demand so the Stellar SDK stays out of the initial bundle.
+    import('@/lib/stellar/balance')
+      .then(({ tokenBalance }) => tokenBalance(address))
       .then(setBalance)
       .catch(() => setBalance(null));
   }, [address]);
