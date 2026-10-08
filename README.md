@@ -97,7 +97,7 @@ Association websites and partner platforms can embed a compact, live donation wi
 ### Parameters
 
 - `id`: Campaign ID (e.g. `/embed/campaigns/{id}` or `/embed/{id}`)
-- **Dimensions**: Recommended width `360px`–`400px`, minimum height `440px`.
+- **Dimensions**: Recommended width `360px`-`400px`, minimum height `440px`.
 - **Features**: Live milestone funding progress bar, direct wallet connection, instant donation in XLM, and transparent link back to full verification evidence on Aidline.
 
 ## Design
