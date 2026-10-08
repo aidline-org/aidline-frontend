@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { KIND } from '@/components/campaign/kind';
 import { TxStatus } from '@/components/ui/TxStatus';
@@ -16,6 +16,63 @@ import { useTx } from '@/lib/useTx';
 
 const DAY = 86_400_000;
 const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+const DRAFT_KEY = 'aidline_start_campaign_draft';
+
+interface CampaignDraft {
+  kind: CampaignKind;
+  title: string;
+  summary: string;
+  description: string;
+  location: string;
+  organizer: string;
+  imageUrl: string;
+  beneficiaryInput: string | null;
+  verifier: string;
+  deadline: string;
+  milestones: string[];
+}
+
+function saveDraft(draft: CampaignDraft) {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const hasContent =
+        draft.title.trim() ||
+        draft.summary.trim() ||
+        draft.description.trim() ||
+        draft.location.trim() ||
+        draft.organizer.trim() ||
+        draft.imageUrl.trim() ||
+        draft.milestones.some((m) => m.trim());
+      if (hasContent) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      }
+    }
+  } catch {
+    // Ignore storage errors gracefully (e.g. quota, incognito/blocked storage)
+  }
+}
+
+function loadDraft(): CampaignDraft | null {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const data = localStorage.getItem(DRAFT_KEY);
+      if (data) return JSON.parse(data) as CampaignDraft;
+    }
+  } catch {
+    // Ignore storage errors
+  }
+  return null;
+}
+
+function clearDraft() {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
   const router = useRouter();
@@ -37,6 +94,68 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
   const [milestones, setMilestones] = useState(['', '']);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [savedDraft, setSavedDraft] = useState<CampaignDraft | null>(null);
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
+
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft) {
+      setSavedDraft(draft);
+    }
+  }, []);
+
+  useEffect(() => {
+    saveDraft({
+      kind,
+      title,
+      summary,
+      description,
+      location,
+      organizer,
+      imageUrl,
+      beneficiaryInput,
+      verifier,
+      deadline,
+      milestones,
+    });
+  }, [
+    kind,
+    title,
+    summary,
+    description,
+    location,
+    organizer,
+    imageUrl,
+    beneficiaryInput,
+    verifier,
+    deadline,
+    milestones,
+  ]);
+
+  const restoreDraft = () => {
+    if (!savedDraft) return;
+    if (savedDraft.kind) setKind(savedDraft.kind);
+    if (savedDraft.title !== undefined) setTitle(savedDraft.title);
+    if (savedDraft.summary !== undefined) setSummary(savedDraft.summary);
+    if (savedDraft.description !== undefined) setDescription(savedDraft.description);
+    if (savedDraft.location !== undefined) setLocation(savedDraft.location);
+    if (savedDraft.organizer !== undefined) setOrganizer(savedDraft.organizer);
+    if (savedDraft.imageUrl !== undefined) setImageUrl(savedDraft.imageUrl);
+    if (savedDraft.beneficiaryInput !== undefined) setBeneficiary(savedDraft.beneficiaryInput);
+    if (savedDraft.verifier) setVerifier(savedDraft.verifier);
+    if (savedDraft.deadline) setDeadline(savedDraft.deadline);
+    if (savedDraft.milestones && Array.isArray(savedDraft.milestones) && savedDraft.milestones.length > 0) {
+      setMilestones(savedDraft.milestones);
+    }
+    setSavedDraft(null);
+    setIsDraftRestored(true);
+  };
+
+  const dismissDraft = () => {
+    clearDraft();
+    setSavedDraft(null);
+  };
 
   const beneficiary = beneficiaryInput ?? address ?? '';
 
@@ -114,7 +233,10 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
         return true;
       },
     );
-    if (result) router.push(`/campaigns/${String(result.value)}`);
+    if (result) {
+      clearDraft();
+      router.push(`/campaigns/${String(result.value)}`);
+    }
   };
 
   if (verifiers.length === 0) {
@@ -145,6 +267,40 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
         void submit();
       }}
     >
+      {savedDraft && (
+        <div className="flex flex-wrap items-center justify-between gap-4 border border-ink bg-paper-raised p-4">
+          <div>
+            <p className="font-medium text-ink">Saved draft available</p>
+            <p className="mt-0.5 text-sm text-ink-soft">
+              You have an unsaved draft from a previous session
+              {savedDraft.title ? `: "${savedDraft.title}"` : ''}.
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              className="btn btn-primary py-1.5 text-sm"
+              onClick={restoreDraft}
+            >
+              Restore draft
+            </button>
+            <button
+              type="button"
+              className="link text-sm"
+              onClick={dismissDraft}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isDraftRestored && (
+        <p className="text-sm text-ink-muted">
+          Draft restored. You can make further edits or submit when ready.
+        </p>
+      )}
+
       <fieldset>
         <legend className="kicker mb-4">1. What kind of campaign</legend>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -404,3 +560,4 @@ export function CreateCampaignForm({ verifiers }: { verifiers: Verifier[] }) {
     </form>
   );
 }
+
