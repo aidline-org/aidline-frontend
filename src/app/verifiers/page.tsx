@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 import { VerifierApplicationForm } from '@/components/forms/VerifierApplicationForm';
 import { Container } from '@/components/ui/Container';
@@ -37,9 +38,12 @@ export default async function VerifiersPage() {
                 className="grid gap-2 border-b border-rule py-6 md:grid-cols-[1fr_2fr_auto] md:gap-8"
               >
                 <div>
-                  <p className="font-serif text-xl text-ink">{v.orgName ?? 'Unnamed verifier'}</p>
+                  <Link href={`/verifiers/${v.address}`} className="font-serif text-xl text-ink hover:underline">
+                    {v.orgName ?? 'Unnamed verifier'}
+                  </Link>
                   {v.country && <p className="text-sm text-ink-muted">{v.country}</p>}
                 </div>
+
                 <p className="text-[0.9375rem]">
                   {v.description ?? 'This verifier has not published a profile yet.'}
                 </p>

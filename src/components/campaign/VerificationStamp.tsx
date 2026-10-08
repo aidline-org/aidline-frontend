@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { formatDate, shortAddress } from '@/lib/format';
 
 /** Looks like a rubber stamp on a document. See DESIGN.md. */
@@ -15,7 +17,12 @@ export function VerificationStamp({
       <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
         <path d="M1 5.5L4 8.5L9 1.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
       </svg>
-      Verified · {verifierName ?? shortAddress(verifier)} · {formatDate(date)}
+      Verified ·{' '}
+      <Link href={`/verifiers/${verifier}`} className="hover:underline">
+        {verifierName ?? shortAddress(verifier)}
+      </Link>{' '}
+      · {formatDate(date)}
     </span>
   );
 }
+
