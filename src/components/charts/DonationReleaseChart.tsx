@@ -57,12 +57,14 @@ export function DonationReleaseChart({
   const chartH = height - paddingTop - paddingBottom;
 
   const maxVal = Math.max(
-    ...points.flatMap((p) => [Number(BigInt(p.donated) / 10000000n), Number(BigInt(p.released) / 10000000n)]),
+    ...points.flatMap((p) => [
+      Number(BigInt(p.donated) / 10000000n),
+      Number(BigInt(p.released) / 10000000n),
+    ]),
     100,
   );
 
-  const getX = (index: number) =>
-    paddingLeft + (index / (points.length - 1 || 1)) * chartW;
+  const getX = (index: number) => paddingLeft + (index / (points.length - 1 || 1)) * chartW;
 
   const getY = (valStr: string) => {
     const val = Number(BigInt(valStr) / 10000000n);
@@ -210,14 +212,18 @@ export function DonationReleaseChart({
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-left text-sm border-collapse">
-            <caption className="sr-only">
-              Donations and releases over time
-            </caption>
+            <caption className="sr-only">Donations and releases over time</caption>
             <thead>
               <tr className="border-b border-rule font-mono text-xs uppercase tracking-wider text-ink-muted">
-                <th scope="col" className="py-2 pr-4">Time Period</th>
-                <th scope="col" className="py-2 px-4 text-right">Donated</th>
-                <th scope="col" className="py-2 pl-4 text-right">Released</th>
+                <th scope="col" className="py-2 pr-4">
+                  Time Period
+                </th>
+                <th scope="col" className="py-2 px-4 text-right">
+                  Donated
+                </th>
+                <th scope="col" className="py-2 pl-4 text-right">
+                  Released
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-rule font-mono">
@@ -226,9 +232,7 @@ export function DonationReleaseChart({
                   <th scope="row" className="py-2.5 pr-4 font-normal text-ink">
                     {p.date}
                   </th>
-                  <td className="py-2.5 px-4 text-right text-relief">
-                    {formatAmount(p.donated)}
-                  </td>
+                  <td className="py-2.5 px-4 text-right text-relief">{formatAmount(p.donated)}</td>
                   <td className="py-2.5 pl-4 text-right text-ink font-medium">
                     {formatAmount(p.released)}
                   </td>

@@ -8,9 +8,7 @@ export default function OfflinePage() {
       <p className="font-mono text-xs uppercase tracking-widest text-[var(--ink-muted)]">
         Connection lost
       </p>
-      <h1 className="mt-3 font-serif text-3xl font-semibold text-[var(--ink)]">
-        You are offline
-      </h1>
+      <h1 className="mt-3 font-serif text-3xl font-semibold text-[var(--ink)]">You are offline</h1>
       <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-[var(--ink-soft)]">
         Aidline requires an active internet connection to load campaign updates and verify wallet
         data. Please check your connection and try again.

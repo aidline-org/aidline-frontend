@@ -36,7 +36,12 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme || 'light';
       return (
-        <div data-theme={theme} className={theme === 'dark' ? 'bg-[#14130F] text-[#F1EBDD] p-6' : 'bg-[#F6F1E7] text-[#1B1A17] p-6'}>
+        <div
+          data-theme={theme}
+          className={
+            theme === 'dark' ? 'bg-[#14130F] text-[#F1EBDD] p-6' : 'bg-[#F6F1E7] text-[#1B1A17] p-6'
+          }
+        >
           <Story />
         </div>
       );

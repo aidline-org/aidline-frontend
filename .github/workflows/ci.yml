@@ -29,4 +29,3 @@ jobs:
           uploadTargets: 'temporary-public-storage'
         env:
           NEXT_PUBLIC_AIDLINE_CONTRACT_ID: CALNXTTPKPTCCWSTN3NHQNZHPXM2IXQZQMFBCCK7LI3N5FRB6DB5NLHK
-

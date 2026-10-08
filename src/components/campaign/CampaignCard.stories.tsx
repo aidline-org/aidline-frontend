@@ -22,7 +22,8 @@ const sampleEmergencyCampaign: Campaign = {
   donorCount: 28,
   metadata: {
     title: 'Hurricane Flood Relief Supplies',
-    summary: 'Emergency food, clean water, and medical kits delivered directly to affected families.',
+    summary:
+      'Emergency food, clean water, and medical kits delivered directly to affected families.',
     description: 'Full description of hurricane relief effort.',
     location: 'Les Cayes, Haiti',
     organizer: 'Haiti Diaspora Coalition',
@@ -49,7 +50,8 @@ const sampleClimateCampaign: Campaign = {
   donorCount: 75,
   metadata: {
     title: 'Coastal Mangrove Reforestation',
-    summary: 'Restoring 15 hectares of coastal mangroves to buffer storm surges and sequester carbon.',
+    summary:
+      'Restoring 15 hectares of coastal mangroves to buffer storm surges and sequester carbon.',
     description: 'Full description of mangrove project.',
     location: 'Saint-Louis du Sud, Haiti',
     organizer: 'EcoRelief Alliance',

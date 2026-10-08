@@ -1,6 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-function ButtonDemo({ label, variant = 'primary', disabled = false, size = 'md' }: { label: string; variant?: 'primary' | 'secondary'; disabled?: boolean; size?: 'sm' | 'md' }) {
+function ButtonDemo({
+  label,
+  variant = 'primary',
+  disabled = false,
+  size = 'md',
+}: {
+  label: string;
+  variant?: 'primary' | 'secondary';
+  disabled?: boolean;
+  size?: 'sm' | 'md';
+}) {
   const sizeClass = size === 'sm' ? 'text-xs py-1 px-3' : '';
   const variantClass = variant === 'primary' ? 'btn btn-primary' : 'btn btn-secondary';
   return (

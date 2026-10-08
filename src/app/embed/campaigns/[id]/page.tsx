@@ -27,7 +27,12 @@ export default async function EmbedCampaignPage({ params }: Props) {
     <div className="min-h-screen bg-paper p-4 font-sans text-ink antialiased">
       <div className="mx-auto max-w-sm rounded-[2px] border border-ink bg-paper-raised p-5 shadow-sm">
         <div className="flex items-center justify-between border-b border-rule pb-3">
-          <Link href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-ink hover:opacity-80">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-ink hover:opacity-80"
+          >
             <Wordmark className="h-4 w-auto" />
           </Link>
           <span className={`text-[0.6875rem] font-medium uppercase tracking-wider ${k.text}`}>
@@ -40,7 +45,7 @@ export default async function EmbedCampaignPage({ params }: Props) {
             {m?.title ?? `Campaign #${campaign.id}`}
           </h2>
           <p className="mt-1 text-xs text-ink-muted">
-            {m?.organizer ? `By ${m.organizer}` : m?.location ?? 'Verified Campaign'}
+            {m?.organizer ? `By ${m.organizer}` : (m?.location ?? 'Verified Campaign')}
           </p>
         </div>
 

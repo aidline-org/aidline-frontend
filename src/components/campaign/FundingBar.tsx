@@ -68,7 +68,9 @@ export function FundingBar({
             <dd className="mt-0.5 text-ink">
               {formatAmount(released)}
               {releasedFiat && (
-                <span className="block font-mono text-[0.75rem] text-ink-muted">{releasedFiat}</span>
+                <span className="block font-mono text-[0.75rem] text-ink-muted">
+                  {releasedFiat}
+                </span>
               )}
             </dd>
           </div>

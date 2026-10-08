@@ -9,10 +9,7 @@ export function WrongNetworkBanner() {
   if (!isWrongNetwork) return null;
 
   return (
-    <div
-      role="alert"
-      className="border-b border-rule bg-paper-sunk px-4 py-3 text-ink"
-    >
+    <div role="alert" className="border-b border-rule bg-paper-sunk px-4 py-3 text-ink">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 text-sm">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">

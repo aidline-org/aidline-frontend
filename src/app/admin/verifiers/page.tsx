@@ -83,13 +83,16 @@ export default function AdminVerifiersPage() {
       </div>
 
       <p className="mt-4 max-w-2xl text-[1.0625rem] text-ink-soft">
-        Verifiers are independent entities authorized on-chain to verify milestones and release escrowed campaign funds. Only the authorized Aidline admin wallet can execute on-chain verifier registrations.
+        Verifiers are independent entities authorized on-chain to verify milestones and release
+        escrowed campaign funds. Only the authorized Aidline admin wallet can execute on-chain
+        verifier registrations.
       </p>
 
       {!isConnected && (
         <div className="mt-8 border-y border-rule py-10">
           <Notice title="Wallet disconnected">
-            Connect the Aidline admin wallet to review pending verifier applications and register verifiers on chain.
+            Connect the Aidline admin wallet to review pending verifier applications and register
+            verifiers on chain.
           </Notice>
           <button type="button" className="btn btn-primary mt-6" onClick={() => void connect()}>
             Connect wallet
@@ -100,7 +103,10 @@ export default function AdminVerifiersPage() {
       {isConnected && !isAdmin && (
         <div className="mt-8">
           <Notice title="Unauthorized wallet" tone="danger">
-            The connected wallet (<span className="font-mono">{shortAddress(address ?? '', 6)}</span>) is not configured as the Aidline admin. Please switch to the authorized admin wallet to manage verifier registrations.
+            The connected wallet (
+            <span className="font-mono">{shortAddress(address ?? '', 6)}</span>) is not configured
+            as the Aidline admin. Please switch to the authorized admin wallet to manage verifier
+            registrations.
           </Notice>
         </div>
       )}
@@ -110,7 +116,8 @@ export default function AdminVerifiersPage() {
           <section className="border-t border-rule pt-8">
             <h2 className="text-[1.75rem]">Pending Verifier Applications</h2>
             <p className="mt-2 text-sm text-ink-muted">
-              Organizations that have submitted a verification request. Registering grants on-chain verification privileges.
+              Organizations that have submitted a verification request. Registering grants on-chain
+              verification privileges.
             </p>
 
             {loading ? (
@@ -130,7 +137,9 @@ export default function AdminVerifiersPage() {
                           <h3 className="font-serif text-xl text-ink">{app.orgName}</h3>
                           <span className="text-sm text-ink-muted">{app.country}</span>
                         </div>
-                        <p className="text-[0.9375rem] text-ink-soft max-w-3xl">{app.description}</p>
+                        <p className="text-[0.9375rem] text-ink-soft max-w-3xl">
+                          {app.description}
+                        </p>
                         <div className="flex flex-wrap gap-4 text-xs figure text-ink-muted">
                           <span>
                             Address:{' '}
