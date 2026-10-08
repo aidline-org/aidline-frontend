@@ -28,7 +28,8 @@ interface FiatContextValue {
   rates: Rates | null;
   loading: boolean;
   error: boolean;
-  formatFiat: (rawXlm: string | bigint | number) => string | null;
+  /** Takes an amount in stroops, as the API and the contract use. */
+  formatFiat: (stroops: string | bigint) => string | null;
 }
 
 const FiatContext = createContext<FiatContextValue | null>(null);
@@ -56,6 +57,37 @@ function subscribeCurrency(listener: () => void) {
     currencyListeners.delete(listener);
     window.removeEventListener('storage', listener);
   };
+}
+
+/**
+ * Converts an amount in stroops (string or bigint, as returned by the API)
+ * into an approximate fiat string such as "~ $12.40". Returns null for
+ * invalid, zero or negative amounts.
+ */
+export function stroopsToFiat(
+  stroops: string | bigint,
+  rate: number,
+  currency: Currency,
+): string | null {
+  let units: bigint;
+  try {
+    units = BigInt(stroops);
+  } catch {
+    return null;
+  }
+  if (units <= 0n || rate <= 0) return null;
+  const xlm = Number(units) / 10 ** config.tokenDecimals;
+  const value = xlm * rate;
+  try {
+    const formatted = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: value < 1 ? 4 : 2,
+    }).format(value);
+    return `~ ${formatted}`;
+  } catch {
+    return `~ ${value.toFixed(2)} ${currency}`;
+  }
 }
 
 /** Fetches the XLM price in every supported currency. */
@@ -116,37 +148,9 @@ export function FiatProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const formatFiat = useCallback(
-    (rawXlm: string | bigint | number): string | null => {
-      if (!rates) return null;
-      const rateKey = currency.toLowerCase() as keyof Rates;
-      const rate = rates[rateKey];
-      if (!rate || rate <= 0) return null;
-
-      let numericXlm = 0;
-      if (typeof rawXlm === 'bigint') {
-        numericXlm = Number(rawXlm) / 10 ** config.tokenDecimals;
-      } else if (typeof rawXlm === 'string') {
-        const parsed = parseFloat(rawXlm.replace(/,/g, ''));
-        if (isNaN(parsed)) return null;
-        numericXlm = parsed;
-      } else if (typeof rawXlm === 'number') {
-        if (isNaN(rawXlm)) return null;
-        numericXlm = rawXlm;
-      }
-
-      if (numericXlm <= 0) return null;
-
-      const fiatVal = numericXlm * rate;
-      try {
-        const formatted = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency,
-          maximumFractionDigits: fiatVal < 1 ? 4 : 2,
-        }).format(fiatVal);
-        return `~ ${formatted}`;
-      } catch {
-        return `~ ${fiatVal.toFixed(2)} ${currency}`;
-      }
+    (stroops: string | bigint): string | null => {
+      const rate = rates?.[currency.toLowerCase() as keyof Rates];
+      return rate ? stroopsToFiat(stroops, rate, currency) : null;
     },
     [currency, rates],
   );
