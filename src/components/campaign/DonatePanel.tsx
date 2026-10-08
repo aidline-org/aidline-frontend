@@ -127,8 +127,20 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
 
       <TxStatus
         state={state}
-        success={`Thank you. ${formatAmount(lastAmount)} is now in escrow for this campaign.`}
+        success={
+          state.phase === 'done' && state.hash ? (
+            <span>
+              Thank you. {formatAmount(lastAmount)} is now in escrow for this campaign.{' '}
+              <a href={`/receipts/${state.hash}`} className="link">
+                View & share receipt
+              </a>
+            </span>
+          ) : (
+            `Thank you. ${formatAmount(lastAmount)} is now in escrow for this campaign.`
+          )
+        }
       />
     </form>
   );
 }
+

@@ -92,7 +92,19 @@ export interface Stats {
   milestonesVerified: number;
 }
 
+export interface ReceiptDetail {
+  txHash: string;
+  donor: string;
+  amount: string;
+  campaignId: string;
+  campaignTitle: string | null;
+  kind: CampaignKind;
+  location: string | null;
+  createdAt: string;
+}
+
 export interface Verifier {
+
   address: string;
   orgName: string | null;
   website: string | null;
@@ -170,6 +182,8 @@ export const api = {
   verifiers: () => request<{ items: Verifier[] }>('/verifiers'),
   verifier: (address: string) => request<Verifier & { active: boolean }>(`/verifiers/${address}`),
   donor: (address: string) => request<DonorHistory>(`/donors/${address}`),
+  receipt: (txHash: string) => request<ReceiptDetail>(`/receipts/${txHash}`),
+
 
   createMetadata: (body: {
     title: string;
