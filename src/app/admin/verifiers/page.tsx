@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Container } from '@/components/ui/Container';
 import { Notice } from '@/components/ui/Notice';
@@ -13,39 +13,39 @@ import { aidline } from '@/lib/stellar/tx';
 import { useTx } from '@/lib/useTx';
 
 export default function AdminVerifiersPage() {
-  const { address, state: wallet, connect, signTransaction } = useWallet();
+  const { address, state: wallet, connect, sign } = useWallet();
   const { state: txState, run: runTx, busy, reset: resetTx } = useTx();
   const [applications, setApplications] = useState<VerifierApplication[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeAddress, setActiveAddress] = useState<string | null>(null);
   const [customAddress, setCustomAddress] = useState('');
 
-  const fetchApplications = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.verifierApplications();
-      setApplications(data.items ?? []);
-    } catch (err) {
-      // If API doesn't have pending list endpoint or error, gracefully keep empty array
-      setApplications([]);
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .verifierApplications()
+      .then((data) => {
+        if (!cancelled) setApplications(data.items ?? []);
+      })
+      // The pending list endpoint may not exist yet. Show an empty queue instead.
+      .catch(() => {
+        if (!cancelled) setApplications([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => {
-    void fetchApplications();
-  }, [fetchApplications]);
-
   const handleRegister = async (verifierAddr: string) => {
-    if (!address || !signTransaction) return;
+    if (!address) return;
     setActiveAddress(verifierAddr);
     resetTx();
 
     const result = await runTx(
-      (onStatus) => aidline.addVerifier(address, verifierAddr, signTransaction, onStatus),
+      (onStatus) => aidline.addVerifier(address, verifierAddr, sign, onStatus),
       async () => {
         // Refresh verifier list after confirmation
         const verifiers = await api.verifiers().catch(() => null);
@@ -220,7 +220,7 @@ export default function AdminVerifiersPage() {
 
           {txState.phase !== 'idle' && (
             <div className="mt-6">
-              <TxStatus state={txState} onReset={resetTx} />
+              <TxStatus state={txState} success="Verifier registered on chain." />
             </div>
           )}
         </div>
