@@ -147,4 +147,7 @@ export const aidline = {
       sign,
       on,
     ),
+
+  addVerifier: (admin: string, verifier: string, sign: Signer, on?: (s: Status) => void) =>
+    invoke(admin, 'add_verifier', [addr(verifier)], sign, on),
 };
