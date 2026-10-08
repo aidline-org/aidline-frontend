@@ -33,6 +33,9 @@ interface WalletContextValue {
   refreshBalance: () => void;
   sign: Signer;
   error: string | null;
+  isWrongNetwork: boolean;
+  networkPassphrase: string | null;
+  checkNetwork: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -92,6 +95,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<WalletState>({ status: 'loading' });
   const [balance, setBalance] = useState<bigint | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [networkPassphrase, setNetworkPassphrase] = useState<string | null>(null);
   const kitRef = useRef<Kit | null>(null);
 
   // Restore the previous session, if the kit remembers one.
@@ -112,6 +116,38 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const address = state.status === 'connected' ? state.address : null;
+
+  const checkNetwork = useCallback(async () => {
+    const kit = kitRef.current;
+    if (!kit || !address) {
+      setNetworkPassphrase(null);
+      return;
+    }
+    try {
+      const net = await kit.getNetwork();
+      setNetworkPassphrase(net?.networkPassphrase ?? null);
+    } catch {
+      setNetworkPassphrase(null);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    if (!address) {
+      setNetworkPassphrase(null);
+      return;
+    }
+    void checkNetwork();
+    const timer = setInterval(checkNetwork, 5_000);
+    window.addEventListener('focus', checkNetwork);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('focus', checkNetwork);
+    };
+  }, [address, checkNetwork]);
+
+  const isWrongNetwork = Boolean(
+    address && networkPassphrase && networkPassphrase !== config.networkPassphrase,
+  );
 
   const refreshBalance = useCallback(() => {
     if (!address) return;
@@ -139,16 +175,18 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       kitRef.current = kit;
       const { address: next } = await kit.authModal();
       setState({ status: 'connected', address: next, walletName: walletName(kit) });
+      void checkNetwork();
     } catch (err) {
       const message = (err as { message?: string })?.message ?? '';
       // Closing the picker is a choice, not an error.
       if (!/closed the modal/i.test(message)) setError(message || 'The wallet did not connect.');
     }
-  }, []);
+  }, [checkNetwork]);
 
   const disconnect = useCallback(async () => {
     await kitRef.current?.disconnect();
     setState({ status: 'disconnected' });
+    setNetworkPassphrase(null);
   }, []);
 
   const sign = useCallback<Signer>(
@@ -175,8 +213,32 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ state, address, balance, connect, disconnect, refreshBalance, sign, error }),
-    [state, address, balance, connect, disconnect, refreshBalance, sign, error],
+    () => ({
+      state,
+      address,
+      balance,
+      connect,
+      disconnect,
+      refreshBalance,
+      sign,
+      error,
+      isWrongNetwork,
+      networkPassphrase,
+      checkNetwork,
+    }),
+    [
+      state,
+      address,
+      balance,
+      connect,
+      disconnect,
+      refreshBalance,
+      sign,
+      error,
+      isWrongNetwork,
+      networkPassphrase,
+      checkNetwork,
+    ],
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
