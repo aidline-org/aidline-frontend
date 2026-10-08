@@ -1,12 +1,16 @@
 import Link from 'next/link';
 
-/** A single line that steps up at each milestone: the product in one mark. */
-export function Wordmark() {
+/**
+ * A single line that steps up at each milestone: the product in one mark.
+ * `newTab` opens the site in a new tab, for use inside the embeddable widget.
+ */
+export function Wordmark({ newTab = false }: { newTab?: boolean }) {
   return (
     <Link
       href="/"
       className="group inline-flex items-center gap-2.5 text-ink"
       aria-label="Aidline home"
+      {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       <svg width="30" height="18" viewBox="0 0 30 18" fill="none" aria-hidden="true">
         <path
