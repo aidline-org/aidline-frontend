@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "next typegen && tsc --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@creit.tech/stellar-wallets-kit": "^2.7.0",
@@ -20,6 +22,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@storybook/nextjs-vite": "^10.6.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.19.1",
     "@types/react": "^19",
@@ -27,8 +30,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "prettier": "^3.9.9",
+    "storybook": "^10.6.1",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite": "^8.3.4",
     "vitest": "^5.0.3"
   },
   "allowScripts": {
@@ -37,7 +42,8 @@
     "bufferutil": false,
     "fsevents": false,
     "secp256k1": false,
-    "utf-8-validate": false
+    "utf-8-validate": false,
+    "esbuild@0.28.2": true
   },
   "engines": {
     "node": ">=24"
