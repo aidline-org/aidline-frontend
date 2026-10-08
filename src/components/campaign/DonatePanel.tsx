@@ -6,6 +6,7 @@ import { TxStatus } from '@/components/ui/TxStatus';
 import { useWallet } from '@/components/wallet/WalletProvider';
 import { api, type CampaignDetail } from '@/lib/api';
 import { config } from '@/lib/config';
+import { useFiat } from '@/lib/fiat';
 import { formatAmount, parseAmount } from '@/lib/format';
 import { aidline } from '@/lib/stellar/tx';
 import { useTx } from '@/lib/useTx';
@@ -15,11 +16,14 @@ const PRESETS = ['10', '50', '100'];
 export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
   const { address, state: wallet, balance, connect, sign, refreshBalance } = useWallet();
   const { state, run, busy } = useTx();
+  const { formatFiat } = useFiat();
   const [input, setInput] = useState('50');
   const [lastAmount, setLastAmount] = useState<bigint>(0n);
 
   const remaining = BigInt(campaign.goal) - BigInt(campaign.raised);
   const amount = parseAmount(input);
+  const fiatEstimate = amount ? formatFiat(amount) : null;
+
   const invalid =
     amount === null
       ? 'Enter an amount like 25 or 12.5'
@@ -58,9 +62,14 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
         void donate();
       }}
     >
-      <label htmlFor="amount" className="label">
-        Amount
-      </label>
+      <div className="flex items-center justify-between">
+        <label htmlFor="amount" className="label">
+          Amount
+        </label>
+        {fiatEstimate && (
+          <span className="figure font-mono text-xs text-ink-muted">{fiatEstimate}</span>
+        )}
+      </div>
       <div className="flex">
         <input
           id="amount"
@@ -102,7 +111,9 @@ export function DonatePanel({ campaign }: { campaign: CampaignDetail }) {
           className="btn btn-primary mt-5 w-full"
           disabled={busy || Boolean(invalid)}
         >
-          {amount && !invalid ? `Donate ${formatAmount(amount)}` : 'Donate'}
+          {amount && !invalid
+            ? `Donate ${formatAmount(amount)}${fiatEstimate ? ` (${fiatEstimate})` : ''}`
+            : 'Donate'}
         </button>
       ) : (
         <button

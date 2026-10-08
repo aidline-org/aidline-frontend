@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { Container } from '@/components/ui/Container';
+import { CurrencyPicker } from '@/components/ui/CurrencyPicker';
 import { WalletButton } from '@/components/wallet/WalletButton';
 import { WrongNetworkBanner } from '@/components/wallet/WrongNetworkBanner';
 import { config } from '@/lib/config';
@@ -34,7 +35,10 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <WalletButton />
+        <div className="flex items-center gap-3">
+          <CurrencyPicker />
+          <WalletButton />
+        </div>
       </Container>
       <nav
         aria-label="Main mobile"
