@@ -11,15 +11,20 @@ interface DonationReleaseChartProps {
   totalReleased?: string;
 }
 
-// Default fallback history points if API history is not present
-const DEFAULT_HISTORY: StatsHistoryPoint[] = [
-  { date: 'May', donated: '250000000', released: '100000000' },
-  { date: 'Jun', donated: '580000000', released: '320000000' },
-  { date: 'Jul', donated: '920000000', released: '650000000' },
-  { date: 'Aug', donated: '1450000000', released: '1100000000' },
-  { date: 'Sep', donated: '2100000000', released: '1750000000' },
-  { date: 'Oct', donated: '2800000000', released: '2300000000' },
-];
+interface ChartPoint {
+  date: string;
+  donated: string;
+  released: string;
+}
+
+const shortDate = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
+/** Missing values count as zero so one bad row cannot crash the page. */
+const toXlm = (stroops: string | undefined) => Number(BigInt(stroops ?? '0') / 10000000n);
 
 export function DonationReleaseChart({
   history,
@@ -31,19 +36,17 @@ export function DonationReleaseChart({
   const titleId = `${chartId}-title`;
   const descId = `${chartId}-desc`;
 
-  const points =
-    history && history.length > 0
-      ? history
-      : totalDonated && totalReleased
-        ? [
-            { date: 'Start', donated: '0', released: '0' },
-            {
-              date: 'Current',
-              donated: totalDonated,
-              released: totalReleased,
-            },
-          ]
-        : DEFAULT_HISTORY;
+  // Real snapshots only. With fewer than two, the line starts from zero, which
+  // is where the platform began. Without any data the chart is not shown.
+  let points: ChartPoint[] = (history ?? []).map((h) => ({
+    date: shortDate.format(new Date(`${h.snapshotDate}T00:00:00Z`)),
+    donated: h.totalDonated,
+    released: h.totalReleased,
+  }));
+  if (points.length < 2 && totalDonated && totalReleased) {
+    const latest = points[0] ?? { date: 'Now', donated: totalDonated, released: totalReleased };
+    points = [{ date: 'Start', donated: '0', released: '0' }, latest];
+  }
 
   // Compute SVG dimensions and path coordinates
   const width = 600;
@@ -56,18 +59,12 @@ export function DonationReleaseChart({
   const chartW = width - paddingLeft - paddingRight;
   const chartH = height - paddingTop - paddingBottom;
 
-  const maxVal = Math.max(
-    ...points.flatMap((p) => [
-      Number(BigInt(p.donated) / 10000000n),
-      Number(BigInt(p.released) / 10000000n),
-    ]),
-    100,
-  );
+  const maxVal = Math.max(...points.flatMap((p) => [toXlm(p.donated), toXlm(p.released)]), 100);
 
   const getX = (index: number) => paddingLeft + (index / (points.length - 1 || 1)) * chartW;
 
   const getY = (valStr: string) => {
-    const val = Number(BigInt(valStr) / 10000000n);
+    const val = toXlm(valStr);
     return paddingTop + chartH - (val / maxVal) * chartH;
   };
 
@@ -78,6 +75,8 @@ export function DonationReleaseChart({
   const releasedPath = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(p.released)}`)
     .join(' ');
+
+  if (points.length === 0) return null;
 
   return (
     <div className="border border-rule bg-paper-raised p-6 rounded-[2px] shadow-none">

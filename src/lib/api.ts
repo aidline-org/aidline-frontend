@@ -110,11 +110,17 @@ export interface VerifierApplication {
   status?: string;
 }
 
+/** One daily snapshot from GET /stats/history. Amounts are stroop strings. */
 export interface StatsHistoryPoint {
-  date: string;
-  donated: string;
-  released: string;
-  timestamp?: number;
+  snapshotDate: string;
+  campaigns: number;
+  activeCampaigns: number;
+  totalDonated: string;
+  totalReleased: string;
+  totalRefunded: string;
+  donors: number;
+  verifiers: number;
+  milestonesVerified: number;
 }
 
 export interface DonorHistory {
