@@ -100,6 +100,23 @@ export interface Verifier {
   description: string | null;
 }
 
+export interface VerifierApplication {
+  address: string;
+  orgName: string;
+  website?: string | null;
+  country: string;
+  description: string;
+  createdAt?: string;
+  status?: string;
+}
+
+export interface StatsHistoryPoint {
+  date: string;
+  donated: string;
+  released: string;
+  timestamp?: number;
+}
+
 export interface DonorHistory {
   address: string;
   totalDonated: string;
@@ -185,4 +202,6 @@ export const api = {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }),
+  verifierApplications: () => request<{ items: VerifierApplication[] }>('/verifiers/applications'),
+  statsHistory: () => request<{ items: StatsHistoryPoint[] }>('/stats/history'),
 };

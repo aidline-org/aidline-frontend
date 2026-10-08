@@ -24,6 +24,7 @@ export const config = {
   tokenId: process.env.NEXT_PUBLIC_AIDLINE_TOKEN_ID ?? '',
   tokenSymbol: process.env.NEXT_PUBLIC_TOKEN_SYMBOL ?? 'XLM',
   tokenDecimals: Number(process.env.NEXT_PUBLIC_TOKEN_DECIMALS ?? 7),
+  adminAddress: process.env.NEXT_PUBLIC_ADMIN_ADDRESS ?? '',
 };
 
 export const explorer = {

@@ -69,13 +69,36 @@ Never put secrets in `NEXT_PUBLIC_*` variables. They are shipped to every browse
 
 ```
 src/
-  app/                 routes: home, campaigns, campaign detail, start, verifiers, donors, how it works
+  app/                 routes: home, campaigns, campaign detail, start, verifiers, donors, how it works, embed
   components/campaign  funding bar, milestone ledger, donate, refund, verifier and creator panels
   components/forms     create campaign, verifier application
   components/wallet    multi wallet connection and live balance
   lib/                 API client, formatting, Stellar transactions, contract error messages
 test/                  unit tests
 ```
+
+## Embeddable Donate Widget
+
+Association websites and partner platforms can embed a compact, live donation widget directly onto their pages.
+
+### HTML Iframe Snippet
+
+```html
+<iframe
+  src="https://aidline.org/embed/campaigns/1"
+  width="380"
+  height="460"
+  style="border: 0; overflow: hidden;"
+  title="Donate to Aidline Campaign"
+  loading="lazy"
+></iframe>
+```
+
+### Parameters
+
+- `id`: Campaign ID (e.g. `/embed/campaigns/{id}` or `/embed/{id}`)
+- **Dimensions**: Recommended width `360px`–`400px`, minimum height `440px`.
+- **Features**: Live milestone funding progress bar, direct wallet connection, instant donation in XLM, and transparent link back to full verification evidence on Aidline.
 
 ## Design
 
