@@ -108,7 +108,7 @@ Aidline has a deliberate visual identity: an editorial, field report look with p
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Browse open work by complexity in [ISSUES.md](ISSUES.md): 30 scoped issues, including good first issues for newcomers.
+Browse open work by complexity in [ISSUES.md](ISSUES.md), including good first issues for newcomers.
 
 ## Related repos
 
