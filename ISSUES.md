@@ -5,9 +5,9 @@ Open issues for **aidline-frontend**, grouped by complexity. GitHub is the sourc
 | Complexity | Wave points | Open issues |
 | ---------- | ----------- | ----------- |
 | Trivial    | 100         | 9           |
-| Medium     | 150         | 19          |
-| High       | 200         | 2           |
-| **Total**  |             | **30**      |
+| Medium     | 150         | 12          |
+| High       | 200         | 1           |
+| **Total**  |             | **22**      |
 
 Good first issues: 9. They are small, well scoped and a good way to start.
 
@@ -29,31 +29,23 @@ To pick one up, comment on the issue to get assigned, then follow [CONTRIBUTING.
 
 ## Medium (150 points)
 
-| #                                                                | Issue                                                        | Type          | Good first issue |
-| ---------------------------------------------------------------- | ------------------------------------------------------------ | ------------- | ---------------- |
-| [#4](https://github.com/aidline-org/aidline-frontend/issues/4)   | Live chain status in the header                              | enhancement   |                  |
-| [#5](https://github.com/aidline-org/aidline-frontend/issues/5)   | On chain proof panel on campaign pages                       | enhancement   |                  |
-| [#6](https://github.com/aidline-org/aidline-frontend/issues/6)   | Transaction stepper for every wallet action                  | enhancement   |                  |
-| [#7](https://github.com/aidline-org/aidline-frontend/issues/7)   | Highlight campaigns you have backed and add a verifier queue | enhancement   |                  |
-| [#8](https://github.com/aidline-org/aidline-frontend/issues/8)   | French and Spanish translations                              | enhancement   |                  |
-| [#9](https://github.com/aidline-org/aidline-frontend/issues/9)   | End to end smoke tests with Playwright                       | testing       |                  |
-| [#17](https://github.com/aidline-org/aidline-frontend/issues/17) | Open Graph images per campaign                               | enhancement   |                  |
-| [#18](https://github.com/aidline-org/aidline-frontend/issues/18) | Upload a cover photo when creating a campaign                | enhancement   |                  |
-| [#19](https://github.com/aidline-org/aidline-frontend/issues/19) | Autosave the start campaign form                             | enhancement   |                  |
-| [#20](https://github.com/aidline-org/aidline-frontend/issues/20) | Automated accessibility checks                               | testing       |                  |
-| [#21](https://github.com/aidline-org/aidline-frontend/issues/21) | Verifier profile pages                                       | enhancement   |                  |
-| [#22](https://github.com/aidline-org/aidline-frontend/issues/22) | Shareable donation receipts                                  | enhancement   |                  |
-| [#23](https://github.com/aidline-org/aidline-frontend/issues/23) | Installable app with offline fallback                        | enhancement   |                  |
-| [#24](https://github.com/aidline-org/aidline-frontend/issues/24) | Lighthouse performance budget in CI                          | testing       |                  |
-| [#25](https://github.com/aidline-org/aidline-frontend/issues/25) | Clear banner when the wallet is on the wrong network         | enhancement   |                  |
-| [#26](https://github.com/aidline-org/aidline-frontend/issues/26) | Approximate local currency next to XLM amounts               | enhancement   |                  |
-| [#27](https://github.com/aidline-org/aidline-frontend/issues/27) | Admin page to register verifiers                             | enhancement   |                  |
-| [#28](https://github.com/aidline-org/aidline-frontend/issues/28) | Charts of donations and releases over time                   | enhancement   |                  |
-| [#29](https://github.com/aidline-org/aidline-frontend/issues/29) | Storybook for design system components                       | documentation |                  |
+| #                                                                | Issue                                                        | Type        | Good first issue |
+| ---------------------------------------------------------------- | ------------------------------------------------------------ | ----------- | ---------------- |
+| [#4](https://github.com/aidline-org/aidline-frontend/issues/4)   | Live chain status in the header                              | enhancement |                  |
+| [#5](https://github.com/aidline-org/aidline-frontend/issues/5)   | On chain proof panel on campaign pages                       | enhancement |                  |
+| [#6](https://github.com/aidline-org/aidline-frontend/issues/6)   | Transaction stepper for every wallet action                  | enhancement |                  |
+| [#7](https://github.com/aidline-org/aidline-frontend/issues/7)   | Highlight campaigns you have backed and add a verifier queue | enhancement |                  |
+| [#8](https://github.com/aidline-org/aidline-frontend/issues/8)   | French and Spanish translations                              | enhancement |                  |
+| [#9](https://github.com/aidline-org/aidline-frontend/issues/9)   | End to end smoke tests with Playwright                       | testing     |                  |
+| [#17](https://github.com/aidline-org/aidline-frontend/issues/17) | Open Graph images per campaign                               | enhancement |                  |
+| [#18](https://github.com/aidline-org/aidline-frontend/issues/18) | Upload a cover photo when creating a campaign                | enhancement |                  |
+| [#19](https://github.com/aidline-org/aidline-frontend/issues/19) | Autosave the start campaign form                             | enhancement |                  |
+| [#20](https://github.com/aidline-org/aidline-frontend/issues/20) | Automated accessibility checks                               | testing     |                  |
+| [#21](https://github.com/aidline-org/aidline-frontend/issues/21) | Verifier profile pages                                       | enhancement |                  |
+| [#22](https://github.com/aidline-org/aidline-frontend/issues/22) | Shareable donation receipts                                  | enhancement |                  |
 
 ## High (200 points)
 
-| #                                                                | Issue                                             | Type        | Good first issue |
-| ---------------------------------------------------------------- | ------------------------------------------------- | ----------- | ---------------- |
-| [#10](https://github.com/aidline-org/aidline-frontend/issues/10) | Map of campaigns on the home page                 | enhancement |                  |
-| [#30](https://github.com/aidline-org/aidline-frontend/issues/30) | Embeddable donate widget for association websites | enhancement |                  |
+| #                                                                | Issue                             | Type        | Good first issue |
+| ---------------------------------------------------------------- | --------------------------------- | ----------- | ---------------- |
+| [#10](https://github.com/aidline-org/aidline-frontend/issues/10) | Map of campaigns on the home page | enhancement |                  |
