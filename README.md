@@ -4,6 +4,8 @@
 
 # Aidline Frontend
 
+[![CI](https://github.com/aidline-org/aidline-frontend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aidline-org/aidline-frontend/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Live demo:** [aidline-frontend.vercel.app](https://aidline-frontend.vercel.app) · **API:** [aidline-api.onrender.com](https://aidline-api.onrender.com/stats) · Stellar testnet
 
 Web app for **Aidline**, where diaspora communities fund disaster relief and climate work back home, with proof it landed. Built on Stellar.
@@ -103,6 +105,13 @@ Association websites and partner platforms can embed a compact, live donation wi
 ## Design
 
 Aidline has a deliberate visual identity: an editorial, field report look with paper and ink tones and exactly two signal colors. **Read [DESIGN.md](DESIGN.md) before changing anything visual.** Pull requests that drift toward generic UI patterns will be asked to follow it.
+
+## Documentation
+
+- [Deployment](docs/DEPLOYMENT.md): Vercel, other hosts, connecting to the backend
+- [Environment variables](docs/ENVIRONMENT.md): every setting and what it does
+- [Decision records](docs/adr/README.md): why the app is built the way it is
+- [Design](DESIGN.md) and [Roadmap](ROADMAP.md)
 
 ## Contributing
 
