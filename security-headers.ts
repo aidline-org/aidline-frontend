@@ -25,5 +25,3 @@ export const securityHeaders: HeaderRule[] = [
     headers: [{ key: 'X-Frame-Options', value: 'DENY' }],
   },
 ];
-
-// Final validation of security settings - 2026-10-27
