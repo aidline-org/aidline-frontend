@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- Security response headers on every page (nosniff, referrer and permissions policy, HSTS), with framing refused everywhere except the embed widget
+- Loading skeleton while a page's data is fetched
+- Tests for the API client and the `safe` data loader
 - Sitemap with every campaign page, regenerated hourly, and robots.txt
 - Installable app with an offline fallback page (#23, @Feyisara2108)
 - Lighthouse checks in CI (#24, @Feyisara2108)
