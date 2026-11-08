@@ -21,6 +21,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Fixed
 
+- Pages no longer hang when the API is slow or asleep: reads time out after 8 seconds and the page shows its unavailable state
 - Home page crash caused by the chart reading the wrong stats history fields; the chart now shows only real figures
 - Local currency estimates were ten million times too high
 - Build failure from JSX in `.ts` files, plus admin page, embed widget and wallet fixes
