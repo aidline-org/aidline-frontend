@@ -23,7 +23,10 @@ describe('api requests', () => {
   it('calls the configured API url and returns the parsed body', async () => {
     const fetchMock = respond(200, { campaigns: 3 });
     await expect(api.stats()).resolves.toEqual({ campaigns: 3 });
-    expect(fetchMock).toHaveBeenCalledWith(`${config.apiUrl}/stats`, { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenCalledWith(`${config.apiUrl}/stats`, {
+      cache: 'no-store',
+      signal: expect.any(AbortSignal),
+    });
   });
 
   it('builds a query string and drops empty values', async () => {
