@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { api, ApiError } from '@/lib/api';
+import { api, ApiError, READ_TIMEOUT_MS } from '@/lib/api';
 import { config } from '@/lib/config';
 
 function respond(status: number, body: unknown) {
@@ -23,7 +23,36 @@ describe('api requests', () => {
   it('calls the configured API url and returns the parsed body', async () => {
     const fetchMock = respond(200, { campaigns: 3 });
     await expect(api.stats()).resolves.toEqual({ campaigns: 3 });
-    expect(fetchMock).toHaveBeenCalledWith(`${config.apiUrl}/stats`, { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenCalledWith(`${config.apiUrl}/stats`, {
+      cache: 'no-store',
+      signal: expect.any(AbortSignal),
+    });
+  });
+
+  it('gives up on a read that takes longer than the timeout', async () => {
+    const controller = new AbortController();
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        (_url: string, init: RequestInit) =>
+          new Promise((_resolve, reject) =>
+            init.signal?.addEventListener('abort', () => reject(init.signal?.reason)),
+          ),
+      ),
+    );
+    const pending = expect(api.stats()).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(timeout).toHaveBeenCalledWith(READ_TIMEOUT_MS);
+    controller.abort(new DOMException('timed out', 'TimeoutError'));
+    await pending;
+    timeout.mockRestore();
+  });
+
+  it('puts no time limit on writes, which can be large uploads', async () => {
+    const fetchMock = respond(201, { id: 'p', uri: 'u', files: [] });
+    await api.uploadProof(new FormData());
+    const init = (fetchMock.mock.calls[0] as unknown[])[1] as RequestInit;
+    expect(init.signal).toBeUndefined();
   });
 
   it('builds a query string and drops empty values', async () => {

@@ -148,8 +148,19 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Reads give up after this long so a slow or sleeping API cannot hold a page open; the page
+ * renders its "unavailable" state instead. Writes have no limit because proof uploads can be large.
+ */
+export const READ_TIMEOUT_MS = 8000;
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${config.apiUrl}${path}`, { cache: 'no-store', ...init });
+  const read = !init?.method || init.method === 'GET';
+  const res = await fetch(`${config.apiUrl}${path}`, {
+    cache: 'no-store',
+    ...(read && { signal: AbortSignal.timeout(READ_TIMEOUT_MS) }),
+    ...init,
+  });
   const body = await res.json().catch(() => null);
   if (!res.ok) {
     throw new ApiError(res.status, body?.message ?? res.statusText, body?.issues ?? []);
