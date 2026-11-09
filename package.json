@@ -24,7 +24,7 @@
   "devDependencies": {
     "@storybook/nextjs-vite": "^10.6.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^24.19.1",
+    "@types/node": "^26.6.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
