@@ -18,6 +18,13 @@ import {
   type Verifier,
 } from '@/lib/api';
 import { config } from '@/lib/config';
+import {
+  clearCampaignDraft,
+  isCampaignDraftEmpty,
+  readCampaignDraft,
+  saveCampaignDraft,
+  type CampaignDraft,
+} from '@/lib/campaignDraft';
 import { defaultDeadline, minimumDeadline } from '@/lib/deadline';
 import { errorFieldId, errorSummary, fieldA11y } from '@/lib/formA11y';
 import { formatAmount, parseAmount, shortAddress, splitParagraphs } from '@/lib/format';
@@ -89,7 +96,59 @@ export function CreateCampaignForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState('');
+  const [draftReady, setDraftReady] = useState(false);
+  const [draftToRestore, setDraftToRestore] = useState<CampaignDraft | null>(null);
+  const [draftStatus, setDraftStatus] = useState<'idle' | 'saved' | 'unavailable' | 'restored'>(
+    'idle',
+  );
   const uploadedMetadata = useRef<CachedUpload<string, null> | null>(null);
+
+  useEffect(() => {
+    setDraftToRestore(readCampaignDraft());
+    setDraftReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady || draftToRestore) return;
+    const draft: CampaignDraft = {
+      kind,
+      title,
+      summary,
+      description,
+      location,
+      organizer,
+      imageUrl,
+      beneficiaryInput,
+      verifier,
+      deadline,
+      milestones,
+      milestoneDueDates,
+    };
+    if (isCampaignDraftEmpty(draft)) {
+      clearCampaignDraft();
+      setDraftStatus('idle');
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setDraftStatus(saveCampaignDraft(draft) ? 'saved' : 'unavailable');
+    }, 500);
+    return () => window.clearTimeout(timer);
+  }, [
+    draftReady,
+    draftToRestore,
+    kind,
+    title,
+    summary,
+    description,
+    location,
+    organizer,
+    imageUrl,
+    beneficiaryInput,
+    verifier,
+    deadline,
+    milestones,
+    milestoneDueDates,
+  ]);
 
   useEffect(
     () => () => {
@@ -263,7 +322,10 @@ export function CreateCampaignForm({
         return true;
       },
     );
-    if (result) router.push(`/campaigns/${String(result.value)}`);
+    if (result) {
+      clearCampaignDraft();
+      router.push(`/campaigns/${String(result.value)}`);
+    }
   };
 
   if (verifiersUnavailable) {
@@ -328,6 +390,75 @@ export function CreateCampaignForm({
       <p role="status" aria-live="polite" className="sr-only">
         {announcement}
       </p>
+
+      {draftToRestore && (
+        <div role="status" className="border-l-2 border-ink bg-paper-raised py-3 pl-4 pr-3">
+          <p className="font-medium">A saved campaign draft is available.</p>
+          <p className="mt-1 text-[0.9375rem] text-ink-muted">
+            Restore where you left off, or discard the saved draft.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="btn btn-secondary text-xs"
+              onClick={() => {
+                const draft = draftToRestore;
+                setKind(draft.kind);
+                setTitle(draft.title);
+                setSummary(draft.summary);
+                setDescription(draft.description);
+                setLocation(draft.location);
+                setOrganizer(draft.organizer);
+                setImageUrl(draft.imageUrl);
+                setBeneficiary(draft.beneficiaryInput);
+                setVerifier(
+                  verifiers.some((item) => item.address === draft.verifier)
+                    ? draft.verifier
+                    : verifiers[0]?.address ?? '',
+                );
+                setDeadline(draft.deadline);
+                setMilestones(draft.milestones);
+                setMilestoneDueDates(draft.milestoneDueDates);
+                clearMetadata();
+                setDraftToRestore(null);
+                setDraftStatus('restored');
+                setAnnouncement('Campaign draft restored.');
+              }}
+            >
+              Restore draft
+            </button>
+            <button
+              type="button"
+              className="link text-sm"
+              onClick={() => {
+                clearCampaignDraft();
+                setDraftToRestore(null);
+                setDraftStatus('idle');
+                setAnnouncement('Saved campaign draft discarded.');
+              }}
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+      )}
+
+      {draftStatus === 'saved' && (
+        <p role="status" className="text-xs text-ink-muted">
+          Draft saved on this device.
+        </p>
+      )}
+      {draftStatus === 'restored' && (
+        <p role="status" className="text-xs text-ink-muted">
+          Draft restored.
+        </p>
+      )}
+      {draftStatus === 'unavailable' && (
+        <p role="status" className="text-xs text-ink-muted">
+          This browser blocked draft storage. You can keep editing, but the draft may not survive
+          a reload.
+        </p>
+      )}
 
       <fieldset>
         <legend className="kicker mb-4">1. What kind of campaign</legend>
