@@ -114,6 +114,14 @@ describe('api requests', () => {
     );
   });
 
+  it('requests shareable receipts by transaction hash', async () => {
+    const fetchMock = respond(200, {});
+    await api.receipt('a/b?c');
+    expect(String((fetchMock.mock.calls[0] as unknown[])[0])).toBe(
+      `${config.apiUrl}/receipts/a%2Fb%3Fc`,
+    );
+  });
+
   it('posts JSON for metadata', async () => {
     const fetchMock = respond(201, { id: 'abc', uri: 'http://x/metadata/abc' });
     await api.createMetadata({ title: 'T', summary: 'S', description: 'D', location: 'L' });
