@@ -75,6 +75,24 @@ export interface Donation {
   createdAt: string;
 }
 
+export interface DonationReceipt {
+  donor: string;
+  amount: string;
+  txHash: string;
+  createdAt: string;
+  campaignId: string;
+  donation?: (Donation & { campaignId?: string }) | null;
+  campaignTitle?: string | null;
+  campaignStatus?: CampaignStatus;
+  kind?: CampaignKind;
+  raised?: string;
+  released?: string;
+  refunded?: string;
+  beneficiary?: string;
+  campaign?: CampaignDetail | null;
+  [key: string]: unknown;
+}
+
 export interface Release {
   campaignId: string;
   campaignTitle: string | null;
@@ -250,6 +268,10 @@ export const api = {
     request<Verifier & { active: boolean }>(`/verifiers/${encodeURIComponent(address)}`),
   donor: (address: string) =>
     request<DonorHistory>(`/donors/${encodeURIComponent(address)}`),
+  receipt: (txHash: string) =>
+    request<DonationReceipt>(`/receipts/${encodeURIComponent(txHash)}`),
+  donation: (txHash: string) =>
+    request<DonationReceipt>(`/donations/${encodeURIComponent(txHash)}`),
 
   createMetadata: (body: {
     title: string;

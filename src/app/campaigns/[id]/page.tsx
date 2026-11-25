@@ -219,13 +219,9 @@ export default async function CampaignPage(props: PageProps<'/campaigns/[id]'>) 
               <p className="kicker">On the record</p>
               <dl className="mt-3 border-t border-rule text-sm">
                 <Fact label="Verified by">
-                  {verifier?.orgName ? (
-                    <Link href="/verifiers" className="link">
-                      {verifier.orgName}
-                    </Link>
-                  ) : (
-                    <AddressLink address={campaign.verifier} />
-                  )}
+                  <Link href={`/verifiers/${campaign.verifier}`} className="link">
+                    {verifier?.orgName ?? <span className="figure">{shortAddress(campaign.verifier, 5)}</span>}
+                  </Link>
                 </Fact>
                 <Fact label="Paid to">
                   <AddressLink address={campaign.beneficiary} />

@@ -45,6 +45,12 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
           <FiatProvider>
             <WalletProvider>
               <ServiceWorkerRegister />
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:border focus:border-ink focus:bg-paper focus:px-4 focus:py-2"
+              >
+                Skip to main content
+              </a>
               <SiteHeader />
               <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
                 {children}
