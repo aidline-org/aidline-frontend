@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { CampaignCover } from '@/components/campaign/CampaignCover';
 import { KIND } from '@/components/campaign/kind';
@@ -12,16 +12,32 @@ import {
   api,
   ApiError,
   reuseUpload,
+  type Campaign,
   type CampaignKind,
   type CachedUpload,
   type Verifier,
 } from '@/lib/api';
 import { config } from '@/lib/config';
+import { defaultDeadline, minimumDeadline } from '@/lib/deadline';
 import { errorFieldId, errorSummary, fieldA11y } from '@/lib/formA11y';
 import { formatAmount, parseAmount, shortAddress, splitParagraphs } from '@/lib/format';
+import { formatFileSize, PROOF_UPLOAD_LIMITS } from '@/lib/proofUpload';
 import { describeError } from '@/lib/stellar/errors';
 import { aidline } from '@/lib/stellar/tx';
 import { useTx } from '@/lib/useTx';
+
+const COVER_ACCEPT = 'image/jpeg,image/png,image/webp';
+const COVER_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const COVER_MAX_BYTES = PROOF_UPLOAD_LIMITS.maxFileSizeBytes;
+
+function coverFileError(file: File): string | null {
+  if (!COVER_TYPES.includes(file.type)) return 'Use a JPEG, PNG or WebP image.';
+  if (file.size === 0) return 'That file is empty.';
+  if (file.size > COVER_MAX_BYTES) {
+    return `Images must be ${formatFileSize(COVER_MAX_BYTES)} or smaller.`;
+  }
+  return null;
+}
 
 function CharacterCount({ value, max, min }: { value: string; max: number; min?: number }) {
   const [count, setCount] = useState(value.length);
@@ -57,6 +73,11 @@ export function CreateCampaignForm({
   const [location, setLocation] = useState('');
   const [organizer, setOrganizer] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const coverPreviewRef = useRef<string | null>(null);
   const [preview, setPreview] = useState(false);
   // null until edited, so it follows the connected wallet by default.
   const [beneficiaryInput, setBeneficiary] = useState<string | null>(null);
@@ -69,6 +90,13 @@ export function CreateCampaignForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState('');
   const uploadedMetadata = useRef<CachedUpload<string, null> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (coverPreviewRef.current) URL.revokeObjectURL(coverPreviewRef.current);
+    },
+    [],
+  );
 
   const beneficiary = beneficiaryInput ?? address ?? '';
   const metadata = {
@@ -100,6 +128,8 @@ export function CreateCampaignForm({
     if (description.trim().length < 20)
       e.description = 'Tell donors a little more, at least 20 characters.';
     if (location.trim().length < 2) e.location = 'Where is the work happening?';
+    const fileError = coverFile ? coverFileError(coverFile) : null;
+    if (fileError) e.cover = fileError;
     if (!/^G[A-Z2-7]{55}$/.test(beneficiary.trim()))
       e.beneficiary = 'Enter a Stellar address starting with G.';
     if (!verifier) e.verifier = 'Choose a verifier.';
@@ -128,9 +158,51 @@ export function CreateCampaignForm({
     return e;
   };
 
+  const clearCoverPreview = () => {
+    if (coverPreviewRef.current) URL.revokeObjectURL(coverPreviewRef.current);
+    coverPreviewRef.current = null;
+    setCoverPreview(null);
+  };
+
+  const chooseCover = async (file: File | null) => {
+    setUploadError(null);
+    clearCoverPreview();
+    if (!file) return;
+    setCoverFile(file);
+
+    const fileError = coverFileError(file);
+    if (fileError) {
+      setErrors((current) => ({ ...current, cover: fileError }));
+      return;
+    }
+    setErrors((current) => {
+      const next = { ...current };
+      delete next.cover;
+      return next;
+    });
+
+    const previewUrl = URL.createObjectURL(file);
+    coverPreviewRef.current = previewUrl;
+    setCoverPreview(previewUrl);
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const result = await api.uploadCover(form);
+      const url = result.url ?? result.files?.[0]?.url;
+      if (!url) throw new Error('The upload did not return an image URL.');
+      setImageUrl(url);
+      clearMetadata();
+    } catch (err) {
+      setUploadError(describeError(err));
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const submit = async () => {
     setFormError(null);
-    if (!address) return;
+    if (!address || uploading || uploadError) return;
 
     const validationErrors = collectErrors();
     setErrors(validationErrors);
@@ -226,15 +298,16 @@ export function CreateCampaignForm({
     ) : null;
 
   const coverUrl = imageUrl.trim();
+  const coverImageUrl = coverPreview ?? coverUrl;
   const coverCampaign: Pick<Campaign, 'kind' | 'metadata'> = {
     kind,
     metadata: {
       title: '',
       summary: '',
-      location: '',
+      location: location.trim() || 'Location pending',
       organizer: null,
       category: null,
-      imageUrl: coverUrl,
+      imageUrl: coverImageUrl || null,
     },
   };
   const verifierAddress = verifier.trim().toLowerCase();
@@ -393,45 +466,73 @@ export function CreateCampaignForm({
           {err('description')}
         </div>
         <div>
-          <label className="label" htmlFor="image">
-            Cover photo URL <span className="font-normal text-ink-muted">(optional)</span>
+          <label className="label" htmlFor="cover">
+            Cover photo <span className="font-normal text-ink-muted">(optional)</span>
           </label>
           <input
-            id="image"
-            type="url"
-            className="field"
-            {...fieldA11y('imageUrl', errors, 'image-hint')}
-            value={imageUrl}
-            onChange={(e) => {
-              setImageUrl(e.target.value);
-              clearMetadata();
-            }}
-            placeholder="https://"
+            id="cover"
+            type="file"
+            accept={COVER_ACCEPT}
+            className="block w-full text-sm file:mr-3 file:border file:border-ink file:bg-transparent file:px-3 file:py-1.5 file:text-ink"
+            {...fieldA11y('cover', errors, 'cover-hint')}
+            onChange={(e) => void chooseCover(e.target.files?.[0] ?? null)}
+            disabled={uploading}
           />
-          <p className="hint" id="image-hint">
-            A real photo of the place or the work. Without one, a cover is drawn from the location.
+          <p className="hint" id="cover-hint">
+            JPEG, PNG or WebP, up to {formatFileSize(COVER_MAX_BYTES)}. Without a photo, a cover is
+            drawn from the location.
           </p>
-          {/^http:/i.test(coverUrl) && (
-            <p className="hint text-danger">
-              http: links are blocked on secure sites. Use https:// so the image loads for donors.
+          {uploading && (
+            <p role="status" className="hint">
+              Uploading cover image.
             </p>
           )}
-          {coverUrl && (
-            <div className="mt-3">
-              <CampaignCover
-                campaign={coverCampaign}
-                alt="Cover photo preview"
-                className="h-20 w-32 border border-rule"
-                onError={() => setCoverError(true)}
+          {uploadError && (
+            <p role="alert" className="hint text-danger">
+              {uploadError}
+            </p>
+          )}
+          {err('cover')}
+          <div className="mt-3">
+            <CampaignCover
+              campaign={coverCampaign}
+              alt="Cover photo preview"
+              className="h-20 w-32 border border-rule"
+            />
+          </div>
+          <details className="mt-3">
+            <summary className="link text-sm">Use an image URL instead</summary>
+            <div className="mt-2">
+              <label className="sr-only" htmlFor="imageUrl">
+                Cover photo URL
+              </label>
+              <input
+                id="imageUrl"
+                type="url"
+                className="field"
+                {...fieldA11y('imageUrl', errors, 'image-hint')}
+                value={imageUrl}
+                onChange={(e) => {
+                  setImageUrl(e.target.value);
+                  setCoverFile(null);
+                  clearCoverPreview();
+                  setUploadError(null);
+                  clearMetadata();
+                }}
+                placeholder="https://"
               />
+              <p className="hint" id="image-hint">
+                Use a direct link to an image on https://.
+              </p>
+              {/^http:/i.test(coverUrl) && (
+                <p className="hint text-danger">
+                  http: links are blocked on secure sites. Use https:// so the image loads for
+                  donors.
+                </p>
+              )}
+              {err('imageUrl')}
             </div>
-          )}
-          {coverError && (
-            <p role="status" className="hint text-danger">
-              That image could not be loaded. Check the URL and use a direct link to an image.
-            </p>
-          )}
-          {err('imageUrl')}
+          </details>
         </div>
 
         {preview ? (
@@ -645,7 +746,11 @@ export function CreateCampaignForm({
 
       <div className="border-t-2 border-ink pt-6">
         {wallet.status === 'connected' ? (
-          <button type="submit" className="btn btn-primary w-full sm:w-auto" disabled={busy}>
+          <button
+            type="submit"
+            className="btn btn-primary w-full sm:w-auto"
+            disabled={busy || uploading || Boolean(uploadError)}
+          >
             Create campaign{goal !== null ? ` for ${formatAmount(goal)}` : ''}
           </button>
         ) : (

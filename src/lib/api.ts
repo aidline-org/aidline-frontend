@@ -270,6 +270,11 @@ export const api = {
       method: 'POST',
       body: form,
     }),
+  uploadCover: (form: FormData) =>
+    request<{ id?: string; uri?: string; url?: string; files?: ProofFile[] }>('/covers', {
+      method: 'POST',
+      body: form,
+    }),
   applyAsVerifier: (body: {
     address: string;
     orgName: string;
