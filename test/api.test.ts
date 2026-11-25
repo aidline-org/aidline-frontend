@@ -149,6 +149,15 @@ describe('api errors', () => {
     });
   });
 
+  it('names ApiError so logs distinguish it from a plain Error', async () => {
+    respond(400, { message: 'Invalid request' });
+    const err = (await api.stats().catch((e: unknown) => e)) as ApiError;
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.name).toBe('ApiError');
+    // Error.toString() reads `${this.name}: ${this.message}` so logs now show the kind.
+    expect(String(err)).toBe('ApiError: Invalid request');
+  });
+
   it('falls back to the status text when the error body is not JSON', async () => {
     respond(502, undefined);
     await expect(api.stats()).rejects.toMatchObject({

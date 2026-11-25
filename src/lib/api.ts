@@ -185,6 +185,7 @@ export class ApiError extends Error {
     public issues: { path: string; message: string }[] = [],
   ) {
     super(message);
+    this.name = 'ApiError';
   }
 }
 

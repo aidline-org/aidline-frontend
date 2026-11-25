@@ -10,9 +10,14 @@ describe('deadlineParts', () => {
     expect(deadlineParts('2026-10-04T13:00:00Z', now)).toEqual({ kind: 'days', days: 1 });
   });
 
-  it('reports a deadline within the next day as today', () => {
-    expect(deadlineParts('2026-10-03T18:00:00Z', now)).toEqual({ kind: 'today' });
-    expect(deadlineParts('2026-10-03T12:00:00Z', now)).toEqual({ kind: 'today' });
+  it('reports a deadline less than a day away in hours', () => {
+    expect(deadlineParts('2026-10-03T18:00:00Z', now)).toEqual({ kind: 'hours', hours: 6 });
+    expect(deadlineParts('2026-10-04T11:59:59Z', now)).toEqual({ kind: 'hours', hours: 23 });
+  });
+
+  it('reports a deadline less than an hour away as withinHour', () => {
+    expect(deadlineParts('2026-10-03T12:30:00Z', now)).toEqual({ kind: 'withinHour' });
+    expect(deadlineParts('2026-10-03T12:00:01Z', now)).toEqual({ kind: 'withinHour' });
   });
 
   it('reports a deadline in the past as ended', () => {
@@ -23,7 +28,9 @@ describe('deadlineParts', () => {
   it('agrees with deadlineLabel in every case', () => {
     expect(deadlineLabel('2026-10-10T12:00:00Z', now)).toBe('7 days left');
     expect(deadlineLabel('2026-10-04T13:00:00Z', now)).toBe('1 day left');
-    expect(deadlineLabel('2026-10-03T18:00:00Z', now)).toBe('Ends today');
+    expect(deadlineLabel('2026-10-03T18:00:00Z', now)).toBe('6 hours left');
+    expect(deadlineLabel('2026-10-03T13:00:00Z', now)).toBe('1 hour left');
+    expect(deadlineLabel('2026-10-03T12:30:00Z', now)).toBe('Ends within the hour');
     expect(deadlineLabel('2026-10-01T00:00:00Z', now)).toBe('Ended 01 Oct 2026');
   });
 });

@@ -65,11 +65,32 @@ describe('parseAmount', () => {
     expect(parseAmount('0.0000001')).toBe(1n);
   });
 
+  it('accepts a leading or trailing decimal point', () => {
+    expect(parseAmount('.5')).toBe(5_000_000n);
+    expect(parseAmount('5.')).toBe(50_000_000n);
+    expect(parseAmount('.0000001')).toBe(1n);
+  });
+
+  it('accepts commas only in well formed thousands groups', () => {
+    expect(parseAmount('1,000')).toBe(10_000_000_000n);
+    expect(parseAmount('12,500.5')).toBe(125_005_000_000n);
+    expect(parseAmount('1,000,000')).toBe(10_000_000_000_000n);
+  });
+
   it('rejects invalid input', () => {
     expect(parseAmount('')).toBeNull();
     expect(parseAmount('abc')).toBeNull();
     expect(parseAmount('-5')).toBeNull();
     expect(parseAmount('1.00000001')).toBeNull();
+    // #59: a lone decimal point is not an amount.
+    expect(parseAmount('.')).toBeNull();
+    // #58: commas have to sit on thousands boundaries.
+    expect(parseAmount('12,5')).toBeNull();
+    expect(parseAmount('1,2,3')).toBeNull();
+    expect(parseAmount(',5')).toBeNull();
+    expect(parseAmount('12,,000')).toBeNull();
+    expect(parseAmount('1,00')).toBeNull();
+    expect(parseAmount('1,0000')).toBeNull();
   });
 
   it('round trips with formatAmount', () => {
@@ -117,7 +138,14 @@ describe('deadlineLabel', () => {
   it('counts days left', () => {
     expect(deadlineLabel('2026-10-10T12:00:00Z', now)).toBe('7 days left');
     expect(deadlineLabel('2026-10-04T13:00:00Z', now)).toBe('1 day left');
-    expect(deadlineLabel('2026-10-03T18:00:00Z', now)).toBe('Ends today');
+  });
+  it('counts hours left under a day', () => {
+    expect(deadlineLabel('2026-10-03T18:00:00Z', now)).toBe('6 hours left');
+    expect(deadlineLabel('2026-10-03T13:00:00Z', now)).toBe('1 hour left');
+  });
+  it('says Ends within the hour under one hour away', () => {
+    expect(deadlineLabel('2026-10-03T12:30:00Z', now)).toBe('Ends within the hour');
+    expect(deadlineLabel('2026-10-03T12:00:01Z', now)).toBe('Ends within the hour');
   });
   it('shows the end date once passed', () => {
     expect(deadlineLabel('2026-10-01T00:00:00Z', now)).toBe('Ended 01 Oct 2026');

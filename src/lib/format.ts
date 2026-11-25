@@ -38,14 +38,29 @@ export function formatAmount(
   return opts.symbol === false ? text : `${text} ${config.tokenSymbol}`;
 }
 
-/** Parses a user typed amount like "12.5" into the smallest unit. Returns null if invalid. */
+/**
+ * Parses a user typed amount like "12.5" into the smallest unit. Returns null if invalid.
+ *
+ * Accepts:
+ * - Plain digits: `50`, `0`
+ * - A decimal point with digits on either side (or both): `12.5`, `.5`, `5.`
+ * - Thousands separators in the right places: `1,000`, `12,500.5`
+ *
+ * Rejects empty input, `.` on its own, European decimals like `12,5`, and malformed
+ * groups like `1,2,3`, `,5`, or `12,,000`.
+ */
 export function parseAmount(input: string, decimals = config.tokenDecimals): bigint | null {
-  const trimmed = input.trim().replace(/,/g, '');
-  const match = /^(\d+)(?:\.(\d+))?$/.exec(trimmed);
+  const trimmed = input.trim();
+  if (trimmed === '') return null;
+  // Either `whole` (plain or grouped) with an optional `.fraction`, or a leading `.fraction`.
+  // Group 1 is the whole part; group 2 is the fraction after a whole; group 3 is the
+  // fraction when the number has no whole part (".5").
+  const match = /^(?:(\d{1,3}(?:,\d{3})*|\d+)(?:\.(\d*))?|\.(\d+))$/.exec(trimmed);
   if (!match) return null;
-  const [, whole, fraction = ''] = match;
+  const whole = match[3] !== undefined ? '0' : match[1]!.replace(/,/g, '');
+  const fraction = match[3] ?? match[2] ?? '';
   if (fraction.length > decimals) return null;
-  return BigInt(whole!) * 10n ** BigInt(decimals) + BigInt(fraction.padEnd(decimals, '0') || '0');
+  return BigInt(whole) * 10n ** BigInt(decimals) + BigInt(fraction.padEnd(decimals, '0') || '0');
 }
 
 export function capAmount(amount: bigint, limit: bigint | null): bigint {
@@ -147,6 +162,13 @@ export function formatRelativeTime(iso: string | Date, now = new Date()): string
 
 export type DeadlineParts =
   | { kind: 'ended' }
+  | { kind: 'withinHour' }
+  | { kind: 'hours'; hours: number }
+  | { kind: 'days'; days: number };
+
+/**
+ * The deadline as data, so each language can word it: ended, ends within the hour,
+ * N hours left (under a day), or N whole days left.
   | { kind: 'today' }
   | { kind: 'days'; days: number }
   | { kind: 'unknown' };
@@ -160,16 +182,19 @@ export function deadlineParts(iso: string, now = new Date()): DeadlineParts {
   if (!date) return { kind: 'unknown' };
   const ms = date.getTime() - now.getTime();
   if (ms < 0) return { kind: 'ended' };
-  const days = Math.floor(ms / 86_400_000);
-  return days === 0 ? { kind: 'today' } : { kind: 'days', days };
+  if (ms < 3_600_000) return { kind: 'withinHour' };
+  if (ms < 86_400_000) return { kind: 'hours', hours: Math.floor(ms / 3_600_000) };
+  return { kind: 'days', days: Math.floor(ms / 86_400_000) };
 }
 
+/** "12 days left", "9 hours left", "Ends within the hour", "Ended 3 Oct 2026" */
 /** "12 days left", "Ends today", "Ended 3 Oct 2026", or "" for an invalid input. */
 export function deadlineLabel(iso: string, now = new Date()): string {
   const parts = deadlineParts(iso, now);
   if (parts.kind === 'unknown') return '';
   if (parts.kind === 'ended') return `Ended ${formatDate(iso)}`;
-  if (parts.kind === 'today') return 'Ends today';
+  if (parts.kind === 'withinHour') return 'Ends within the hour';
+  if (parts.kind === 'hours') return `${parts.hours} hour${parts.hours === 1 ? '' : 's'} left`;
   return `${parts.days} day${parts.days === 1 ? '' : 's'} left`;
 }
 

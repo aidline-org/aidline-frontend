@@ -58,7 +58,9 @@ export const en = {
   'status.cancelled': 'Cancelled',
   'status.expired': 'Ended',
 
-  'deadline.today': 'Ends today',
+  'deadline.withinHour': 'Ends within the hour',
+  'deadline.hours.one': '{count} hour left',
+  'deadline.hours.other': '{count} hours left',
   'deadline.days.one': '{count} day left',
   'deadline.days.other': '{count} days left',
   'deadline.ended': 'Ended {date}',
@@ -156,7 +158,9 @@ export const fr: Record<MessageKey, string> = {
   'status.cancelled': 'Annulée',
   'status.expired': 'Terminée',
 
-  'deadline.today': "Se termine aujourd'hui",
+  'deadline.withinHour': "Se termine dans moins d'une heure",
+  'deadline.hours.one': '{count} heure restante',
+  'deadline.hours.other': '{count} heures restantes',
   'deadline.days.one': '{count} jour restant',
   'deadline.days.other': '{count} jours restants',
   'deadline.ended': 'Terminée le {date}',
@@ -252,7 +256,9 @@ export const es: Record<MessageKey, string> = {
   'status.cancelled': 'Cancelada',
   'status.expired': 'Finalizada',
 
-  'deadline.today': 'Termina hoy',
+  'deadline.withinHour': 'Termina en menos de una hora',
+  'deadline.hours.one': 'Queda {count} hora',
+  'deadline.hours.other': 'Quedan {count} horas',
   'deadline.days.one': 'Queda {count} día',
   'deadline.days.other': 'Quedan {count} días',
   'deadline.ended': 'Finalizó el {date}',
